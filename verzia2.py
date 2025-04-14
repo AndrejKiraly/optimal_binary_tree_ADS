@@ -21,14 +21,15 @@ def compute_probability_distributions(word_frequencies, included_words, total_fr
     probabilities = [word_frequencies[word] / total_frequency for word in included_words]
 
     dummy_probabilities = [0] * (num_words + 1)
-    sorted_words = list(word_frequencies.keys())
 
     dummy_probabilities[0] = sum(freq for word, freq in word_frequencies.items() if
                                  word < included_words[0] and word not in included_words) / total_frequency
+
     for i in range(1, num_words):
         dummy_probabilities[i] = sum(freq for word, freq in word_frequencies.items() if
                                      included_words[i - 1] < word < included_words[
                                          i] and word not in included_words) / total_frequency
+
     dummy_probabilities[num_words] = sum(freq for word, freq in word_frequencies.items() if
                                          word > included_words[-1] and word not in included_words) / total_frequency
 
