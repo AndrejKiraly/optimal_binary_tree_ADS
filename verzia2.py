@@ -19,19 +19,25 @@ def filter_words_by_frequency(word_frequencies, threshold):
 def compute_probability_distributions(word_frequencies, included_words, total_frequency):
     num_words = len(included_words)
     probabilities = [word_frequencies[word] / total_frequency for word in included_words]
-
     dummy_probabilities = [0] * (num_words + 1)
 
-    dummy_probabilities[0] = sum(freq for word, freq in word_frequencies.items() if
-                                 word < included_words[0] and word not in included_words) / total_frequency
+    for i in range(num_words + 1):
+        frequency_sum = 0
+        for word, freq in word_frequencies.items():
+            if word in included_words:
+                continue
 
-    for i in range(1, num_words):
-        dummy_probabilities[i] = sum(freq for word, freq in word_frequencies.items() if
-                                     included_words[i - 1] < word < included_words[
-                                         i] and word not in included_words) / total_frequency
+            if i == 0:
+                if word < included_words[0]:
+                    frequency_sum += freq
+            elif i == num_words:
+                if word > included_words[-1]:
+                    frequency_sum += freq
+            else:
+                if included_words[i - 1] < word < included_words[i]:
+                    frequency_sum += freq
 
-    dummy_probabilities[num_words] = sum(freq for word, freq in word_frequencies.items() if
-                                         word > included_words[-1] and word not in included_words) / total_frequency
+        dummy_probabilities[i] = frequency_sum / total_frequency
 
     return probabilities, dummy_probabilities
 
