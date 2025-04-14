@@ -89,12 +89,12 @@ def construct_optimal_binary_search_tree(word_frequencies, frequency_threshold):
 
     cost_matrix, root_matrix = construct_optimal_bst(keys, probabilities, dummy_probabilities)
     print(f"Optimalna cena hladania: {cost_matrix[0][len(keys)]}")
-    print("Cost Matrix:")
-    for row in cost_matrix:
-        print(row)
-    print("Root Matrix:")
-    for row in root_matrix:
-        print(row)
+    #print("Cost Matrix:")
+    # for row in cost_matrix:
+    #     print(row)
+    # print("Root Matrix:")
+    # for row in root_matrix:
+    #     print(row)
 
     return keys, probabilities, root_matrix
 
@@ -140,6 +140,7 @@ def search_optimal_bst(words, root_table, target):
     print(f"Slovo '{target}' nebolo najdene v strome.")
     return path, comparisons
 
+
 def main():
     dictionary1 = load_dictionary_from_file("dictionary1.txt")
     dictionary2 = load_dictionary_from_file("dictionary2.txt")
@@ -154,7 +155,7 @@ def main():
         tree_structure = build_tree_structure(root_table, keys, probabilities, 0, len(keys))
         print("Optimal BST structure:", tree_structure)
 
-    search_word = "said"
+    search_word = "jano"
     if keys:
         path, comparisons = search_optimal_bst(keys, root_table, search_word)
         print(f"Cesta k '{search_word}': {path}")
