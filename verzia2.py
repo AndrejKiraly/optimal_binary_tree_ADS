@@ -119,17 +119,21 @@ def build_tree_structure(root_table, keys, probabilities, i, j):
 def search_optimal_bst(words, root_table, target):
     path = []
     comparisons = 0
-    i, j = 0, len(words) - 1
+    i, j = 0, len(words)
 
-    while i <= j:
+    while i < j:
         r = root_table[i][j]
-        path.append(words[r])
+        if r >= len(words):
+            break
+
+        word = words[r]
+        path.append(word)
         comparisons += 1
 
-        if words[r] == target:
+        if word == target:
             return path, comparisons
-        elif target < words[r]:
-            j = r - 1
+        elif target < word:
+            j = r
         else:
             i = r + 1
 
