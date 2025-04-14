@@ -70,8 +70,8 @@ def construct_optimal_binary_search_tree(word_frequencies, frequency_threshold):
     total_frequency = sum(word_frequencies.values())
     print(f"Celkova frekvencia slov suma: {total_frequency}")
 
-    sorted_frequencies = OrderedDict(sorted(word_frequencies.items()))
-    filtered_words = filter_words_by_frequency(sorted_frequencies, frequency_threshold)
+    sorted_key_frequencies = OrderedDict(sorted(word_frequencies.items()))
+    filtered_words = filter_words_by_frequency(sorted_key_frequencies, frequency_threshold)
 
     filtered_frequency_sum = sum(filtered_words.values())
     print(f"Suma frekvencie klucov: {filtered_frequency_sum}")
@@ -82,7 +82,7 @@ def construct_optimal_binary_search_tree(word_frequencies, frequency_threshold):
         return None, None, None
 
     keys = list(filtered_words.keys())
-    probabilities, dummy_probabilities = compute_probability_distributions(sorted_frequencies, keys, total_frequency)
+    probabilities, dummy_probabilities = compute_probability_distributions(sorted_key_frequencies, keys, total_frequency)
     print(f"Keys: {keys}")
     print(f"Key probabilities: {probabilities}")
     print(f"Dummy probabilities: {dummy_probabilities}")
@@ -153,9 +153,9 @@ def main():
 
     if keys:
         tree_structure = build_tree_structure(root_table, keys, probabilities, 0, len(keys))
-        print("Optimal BST structure:", tree_structure)
+        #print("Optimal BST structure:", tree_structure)
 
-    search_word = "jano"
+    search_word = "back"
     if keys:
         path, comparisons = search_optimal_bst(keys, root_table, search_word)
         print(f"Cesta k '{search_word}': {path}")
