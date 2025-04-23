@@ -1,5 +1,5 @@
 from collections import OrderedDict
-
+from bisect import bisect_left, bisect_right
 
 def load_dictionary_from_file(file_path):
     compound_dictionary = {}
@@ -18,28 +18,43 @@ def filter_words_by_frequency(word_frequencies, threshold):
 
 def compute_probability_distributions(word_frequencies, included_words, total_frequency):
     num_words = len(included_words)
+
+    # Convert included words to a set for O(1) lookup
+    included_set = set(included_words)
+
+    # Create sorted list of (word, freq) excluding included_words
+    excluded_words = sorted(
+        (word, freq) for word, freq in word_frequencies.items() if word not in included_set
+    )
+    sorted_excluded_keys = [w for w, _ in excluded_words]
+    sorted_excluded_freqs = [f for _, f in excluded_words]
+
+    # Compute prefix sum for fast range sum
+    prefix_sum = [0]
+    for freq in sorted_excluded_freqs:
+        prefix_sum.append(prefix_sum[-1] + freq)
+
+    # Compute real probabilities
     probabilities = [word_frequencies[word] / total_frequency for word in included_words]
-    dummy_probabilities = [0] * (num_words + 1)
 
+    # Compute dummy probabilities
+    dummy_probabilities = []
     for i in range(num_words + 1):
-        frequency_sum = 0
-        for word, freq in word_frequencies.items():
-            if word in included_words:
-                continue
+        if i == 0:
+            index = bisect_left(sorted_excluded_keys, included_words[0])
+            freq_sum = prefix_sum[index]
+        elif i == num_words:
+            index = bisect_right(sorted_excluded_keys, included_words[-1])
+            freq_sum = prefix_sum[-1] - prefix_sum[index]
+        else:
+            left = bisect_right(sorted_excluded_keys, included_words[i - 1])
+            right = bisect_left(sorted_excluded_keys, included_words[i])
+            freq_sum = prefix_sum[right] - prefix_sum[left]
 
-            if i == 0:
-                if word < included_words[0]:
-                    frequency_sum += freq
-            elif i == num_words:
-                if word > included_words[-1]:
-                    frequency_sum += freq
-            else:
-                if included_words[i - 1] < word < included_words[i]:
-                    frequency_sum += freq
-
-        dummy_probabilities[i] = frequency_sum / total_frequency
+        dummy_probabilities.append(freq_sum / total_frequency)
 
     return probabilities, dummy_probabilities
+
 
 
 def initialize_matrices(size, dummy_probabilities):
@@ -162,7 +177,7 @@ def main():
         tree_structure = build_tree_structure(root_table, keys, probabilities, 0, len(keys))
         #print("Optimal BST structure:", tree_structure)
 
-    search_word = "back"
+    search_word = "the"
     if keys:
         path, comparisons = search_optimal_bst(keys, root_table, search_word)
         print(f"Cesta k '{search_word}': {path}")
